@@ -335,7 +335,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
             RolesListView,
             "List Roles",
             label=_("List Roles"),
-            category="Security",
+            category="security",  # match class_permission_name so FAB menu access works (label stays "Security")
             category_label=_("Security"),
             menu_cond=lambda: bool(
                 appbuilder.app.config.get("SUPERSET_SECURITY_VIEW_MENU", True)
@@ -346,7 +346,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
             UserRegistrationsView,
             "User Registrations",
             label=_("User Registrations"),
-            category="Security",
+            category="security",  # match class_permission_name so FAB menu access works (label stays "Security")
             category_label=_("Security"),
             menu_cond=lambda: bool(appbuilder.app.config["AUTH_USER_REGISTRATION"]),
         )
@@ -355,7 +355,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
             UsersListView,
             "List Users",
             label=_("List Users"),
-            category="Security",
+            category="security",  # match class_permission_name so FAB menu access works (label stays "Security")
             category_label=_("Security"),
             menu_cond=lambda: bool(
                 appbuilder.app.config.get("SUPERSET_SECURITY_VIEW_MENU", True)
@@ -366,7 +366,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
             GroupsListView,
             "List Groups",
             label=_("List Groups"),
-            category="Security",
+            category="security",  # match class_permission_name so FAB menu access works (label stays "Security")
             category_label=_("Security"),
             menu_cond=lambda: bool(
                 appbuilder.app.config.get("SUPERSET_SECURITY_VIEW_MENU", True)
@@ -496,7 +496,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
             ActionLogView,
             "Action Log",
             label=_("Action Log"),
-            category="Security",
+            category="security",  # match class_permission_name so FAB menu access works (label stays "Security")
             category_label=_("Security"),
             icon="fa-list-ol",
             menu_cond=lambda: (
@@ -535,7 +535,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
             "Row Level Security",
             href="RowLevelSecurityView.list",
             label=_("Row Level Security"),
-            category="Security",
+            category="security",  # match class_permission_name so FAB menu access works (label stays "Security")
             category_label=_("Security"),
             icon="fa-lock",
         )
