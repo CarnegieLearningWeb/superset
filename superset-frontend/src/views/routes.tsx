@@ -19,9 +19,9 @@
 
 import { FeatureFlag, isFeatureEnabled } from '@superset-ui/core';
 import {
-  lazy,
-  ComponentType,
   ComponentProps,
+  ComponentType,
+  lazy,
   LazyExoticComponent,
 } from 'react';
 import { isUserAdmin } from 'src/dashboard/util/permissionUtils';

@@ -16,36 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { useMemo, useState } from 'react';
 import { t } from '@apache-superset/core/translation';
-import { isFeatureEnabled, FeatureFlag } from '@superset-ui/core';
+import { FeatureFlag, isFeatureEnabled } from '@superset-ui/core';
+import {
+  ConfirmStatusChange,
+  FaveStar,
+  Tooltip,
+} from '@superset-ui/core/components';
+import { Icons } from '@superset-ui/core/components/Icons';
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Tag as AntdTag,
+  ListViewFilterOperator as FilterOperator,
+  ListView,
+  ModifiedInfo,
+  type ListViewFilters,
+  type ListViewProps,
+} from 'src/components';
+import withToasts from 'src/components/MessageToasts/withToasts';
+import SubMenu, { SubMenuProps } from 'src/features/home/SubMenu';
+import TagModal from 'src/features/tags/TagModal';
+import { deleteTags } from 'src/features/tags/tags';
+import { dangerouslyGetItemDoNotUse } from 'src/utils/localStorageHelpers';
+import { useFavoriteStatus, useListViewResource } from 'src/views/CRUD/hooks';
+import { QueryObjectColumns, Tag } from 'src/views/CRUD/types';
 import {
   Actions,
   createErrorHandler,
   createFetchRelated,
 } from 'src/views/CRUD/utils';
-import { useListViewResource, useFavoriteStatus } from 'src/views/CRUD/hooks';
-import {
-  ConfirmStatusChange,
-  Tooltip,
-  FaveStar,
-} from '@superset-ui/core/components';
-import {
-  Tag as AntdTag,
-  ListView,
-  ModifiedInfo,
-  ListViewFilterOperator as FilterOperator,
-  type ListViewFilters,
-  type ListViewProps,
-} from 'src/components';
-import SubMenu, { SubMenuProps } from 'src/features/home/SubMenu';
-import { dangerouslyGetItemDoNotUse } from 'src/utils/localStorageHelpers';
-import withToasts from 'src/components/MessageToasts/withToasts';
-import { Icons } from '@superset-ui/core/components/Icons';
-import { Link } from 'react-router-dom';
-import { deleteTags } from 'src/features/tags/tags';
-import { QueryObjectColumns, Tag } from 'src/views/CRUD/types';
-import TagModal from 'src/features/tags/TagModal';
 
 const PAGE_SIZE = 25;
 
@@ -168,7 +168,7 @@ function TagList(props: TagListProps) {
           },
         }: any) => (
           <AntdTag>
-            <Link to={`/superset/all_entities/?id=${id}`}>{tagName}</Link>
+            <Link to={`/all_entities/?id=${id}`}>{tagName}</Link>
           </AntdTag>
         ),
         Header: t('Name'),

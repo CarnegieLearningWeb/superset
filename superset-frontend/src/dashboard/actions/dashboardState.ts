@@ -17,28 +17,38 @@
  * under the License.
  */
 /* eslint camelcase: 0 */
+import { t } from '@apache-superset/core/translation';
+import { logging } from '@apache-superset/core/utils';
+import type { AgGridChartState } from '@superset-ui/core';
+import {
+  ensureIsArray,
+  FeatureFlag,
+  getCategoricalSchemeRegistry,
+  getClientErrorObject,
+  getLabelsColorMap,
+  isFeatureEnabled,
+  JsonObject,
+  promiseTimeout,
+  SupersetClient,
+} from '@superset-ui/core';
+import { isEqual } from 'lodash';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import { ActionCreators as UndoActionCreators } from 'redux-undo';
 import rison from 'rison';
 import {
-  ensureIsArray,
-  isFeatureEnabled,
-  FeatureFlag,
-  getLabelsColorMap,
-  SupersetClient,
-  getClientErrorObject,
-  getCategoricalSchemeRegistry,
-  promiseTimeout,
-  JsonObject,
-} from '@superset-ui/core';
-import {
   addChart,
-  removeChart,
   refreshChart,
+  removeChart,
 } from 'src/components/Chart/chartAction';
-import { logging } from '@apache-superset/core/utils';
-import { t } from '@apache-superset/core/translation';
 import { chart as initChart } from 'src/components/Chart/chartReducer';
-import { applyDefaultFormData } from 'src/explore/store';
+import {
+  addDangerToast,
+  addSuccessToast,
+  addWarningToast,
+} from 'src/components/MessageToasts/actions';
+import type { DashboardChartStates } from 'src/dashboard/types/chartState';
+import { getActiveFilters } from 'src/dashboard/util/activeDashboardFilters';
 import {
   SAVE_TYPE_OVERWRITE,
   SAVE_TYPE_OVERWRITE_CONFIRMED,
@@ -47,45 +57,35 @@ import {
   getCrossFiltersConfiguration,
   isCrossFiltersEnabled,
 } from 'src/dashboard/util/crossFilters';
-import {
-  addSuccessToast,
-  addWarningToast,
-  addDangerToast,
-} from 'src/components/MessageToasts/actions';
 import serializeActiveFilterValues from 'src/dashboard/util/serializeActiveFilterValues';
 import serializeFilterScopes from 'src/dashboard/util/serializeFilterScopes';
-import { getActiveFilters } from 'src/dashboard/util/activeDashboardFilters';
-import { safeStringify } from 'src/utils/safeStringify';
+import { applyDefaultFormData } from 'src/explore/store';
+import { ResourceStatus } from 'src/hooks/apiResources/apiResources';
 import { logEvent } from 'src/logger/actions';
 import { LOG_ACTIONS_CONFIRM_OVERWRITE_DASHBOARD_METADATA } from 'src/logger/LogUtils';
-import { isEqual } from 'lodash';
-import { navigateWithState, navigateTo } from 'src/utils/navigationUtils';
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
-import { ResourceStatus } from 'src/hooks/apiResources/apiResources';
-import type { AgGridChartState } from '@superset-ui/core';
-import type { DashboardChartStates } from 'src/dashboard/types/chartState';
-import { UPDATE_COMPONENTS_PARENTS_LIST } from './dashboardLayout';
-import {
-  saveChartConfiguration,
-  dashboardInfoChanged,
-  SAVE_CHART_CONFIG_COMPLETE,
-} from './dashboardInfo';
-import { fetchDatasourceMetadata, setDatasources } from './datasources';
-import { updateDirectPathToFilter } from './dashboardFilters';
-import { SET_IN_SCOPE_STATUS_OF_FILTERS } from './nativeFilters';
-import getOverwriteItems from '../util/getOverwriteItems';
+import { navigateTo, navigateWithState } from 'src/utils/navigationUtils';
+import { safeStringify } from 'src/utils/safeStringify';
 import {
   applyColors,
   enforceSharedLabelsColorsArray,
-  isLabelsColorMapSynced,
-  getColorSchemeDomain,
   getColorNamespace,
+  getColorSchemeDomain,
+  getDynamicLabelsColors,
   getFreshLabelsColorMapEntries,
   getFreshSharedLabels,
-  getDynamicLabelsColors,
+  isLabelsColorMapSynced,
 } from '../../utils/colorScheme';
 import type { DashboardState, GetState, RootState, Slice } from '../types';
+import getOverwriteItems from '../util/getOverwriteItems';
+import { updateDirectPathToFilter } from './dashboardFilters';
+import {
+  dashboardInfoChanged,
+  SAVE_CHART_CONFIG_COMPLETE,
+  saveChartConfiguration,
+} from './dashboardInfo';
+import { UPDATE_COMPONENTS_PARENTS_LIST } from './dashboardLayout';
+import { fetchDatasourceMetadata, setDatasources } from './datasources';
+import { SET_IN_SCOPE_STATUS_OF_FILTERS } from './nativeFilters';
 
 // Dashboard dispatch type. The base ThunkDispatch handles dashboard-specific
 // thunks. The intersection with a generic function-accepting overload allows
@@ -538,9 +538,7 @@ export function saveDashboardRequest(
         }),
       );
       dispatch(saveDashboardFinished());
-      navigateTo(
-        `/superset/dashboard/${(response.json as JsonObject).result?.id}/`,
-      );
+      navigateTo(`/dashboard/${(response.json as JsonObject).result?.id}/`);
       dispatch(addSuccessToast(t('This dashboard was saved successfully.')));
       return response;
     };
@@ -593,7 +591,7 @@ export function saveDashboardRequest(
       }
       dispatch(saveDashboardFinished());
       // redirect to the new slug or id
-      navigateWithState(`/superset/dashboard/${slug || id}/`, {
+      navigateWithState(`/dashboard/${slug || id}/`, {
         event: 'dashboard_properties_changed',
       });
 

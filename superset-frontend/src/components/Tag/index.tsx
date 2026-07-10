@@ -18,13 +18,13 @@
  */
 
 import { styled } from '@apache-superset/core/theme';
-import { Link } from 'react-router-dom';
-import type { TagType } from 'src/types/TagType';
 import { Tag as AntdTag } from '@superset-ui/core/components/Tag';
 import { Tooltip } from '@superset-ui/core/components/Tooltip';
 import type { TagProps } from 'antd/es';
 import type { CheckableTagProps } from 'antd/es/tag';
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import type { TagType } from 'src/types/TagType';
 
 const StyledTag = styled(AntdTag)`
   ${({ theme }) => `
@@ -82,7 +82,7 @@ const SupersetTag = ({
             {' '}
             {id ? (
               <Link
-                to={`/superset/all_entities/?id=${id}`}
+                to={`/all_entities/?id=${id}`}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -103,4 +103,4 @@ const SupersetTag = ({
 export const Tag = Object.assign(SupersetTag, {
   CheckableTag: AntdTag.CheckableTag,
 });
-export type { TagProps, CheckableTagProps, TagType };
+export type { CheckableTagProps, TagProps, TagType };

@@ -16,60 +16,61 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { css, styled, useTheme } from '@apache-superset/core/theme';
 import { t } from '@apache-superset/core/translation';
 import { getExtensionsRegistry, SupersetClient } from '@superset-ui/core';
-import { styled, useTheme, css } from '@apache-superset/core/theme';
-import { FunctionComponent, useState, useMemo, useCallback, Key } from 'react';
+import {
+  CertifiedBadge,
+  ConfirmStatusChange,
+  DatasetTypeLabel,
+  DeleteModal,
+  InfoTooltip,
+  List,
+  Loading,
+  Tooltip,
+} from '@superset-ui/core/components';
+import { Icons } from '@superset-ui/core/components/Icons';
+import { Typography } from '@superset-ui/core/components/Typography';
+import WarningIconWithTooltip from '@superset-ui/core/components/WarningIconWithTooltip';
+import { FunctionComponent, Key, useCallback, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import rison from 'rison';
 import {
-  createFetchRelated,
-  createFetchDistinct,
-  createFetchOwners,
-  createErrorHandler,
-} from 'src/views/CRUD/utils';
-import { OWNER_OPTION_FILTER_PROPS } from 'src/features/owners/OwnerSelectLabel';
+  DatasourceModal,
+  FacePile,
+  ListViewFilterOperator as FilterOperator,
+  GenericLink,
+  ImportModal as ImportModelsModal,
+  ListView,
+  ModifiedInfo,
+  type ListViewFilters,
+  type ListViewProps,
+} from 'src/components';
+import withToasts from 'src/components/MessageToasts/withToasts';
+import { isUserAdmin } from 'src/dashboard/util/permissionUtils';
 import { ColumnObject } from 'src/features/datasets/types';
+import SubMenu, { ButtonProps, SubMenuProps } from 'src/features/home/SubMenu';
+import { OWNER_OPTION_FILTER_PROPS } from 'src/features/owners/OwnerSelectLabel';
+import Owner from 'src/types/Owner';
+import handleResourceExport from 'src/utils/export';
 import { useListViewResource } from 'src/views/CRUD/hooks';
 import {
-  ConfirmStatusChange,
-  CertifiedBadge,
-  DeleteModal,
-  Tooltip,
-  InfoTooltip,
-  DatasetTypeLabel,
-  Loading,
-  List,
-} from '@superset-ui/core/components';
-import { DatasourceModal, GenericLink } from 'src/components';
-import {
-  FacePile,
-  ImportModal as ImportModelsModal,
-  ModifiedInfo,
-  ListView,
-  ListViewFilterOperator as FilterOperator,
-  type ListViewProps,
-  type ListViewFilters,
-} from 'src/components';
-import { Typography } from '@superset-ui/core/components/Typography';
-import handleResourceExport from 'src/utils/export';
-import SubMenu, { SubMenuProps, ButtonProps } from 'src/features/home/SubMenu';
-import Owner from 'src/types/Owner';
-import withToasts from 'src/components/MessageToasts/withToasts';
-import { Icons } from '@superset-ui/core/components/Icons';
-import WarningIconWithTooltip from '@superset-ui/core/components/WarningIconWithTooltip';
-import { isUserAdmin } from 'src/dashboard/util/permissionUtils';
+  createErrorHandler,
+  createFetchDistinct,
+  createFetchOwners,
+  createFetchRelated,
+} from 'src/views/CRUD/utils';
 
+import { useSelector } from 'react-redux';
+import { WIDER_DROPDOWN_WIDTH } from 'src/components/ListView/utils';
 import {
-  PAGE_SIZE,
-  SORT_BY,
-  PASSWORDS_NEEDED_MESSAGE,
   CONFIRM_OVERWRITE_MESSAGE,
+  PAGE_SIZE,
+  PASSWORDS_NEEDED_MESSAGE,
+  SORT_BY,
 } from 'src/features/datasets/constants';
 import DuplicateDatasetModal from 'src/features/datasets/DuplicateDatasetModal';
-import { useSelector } from 'react-redux';
 import { QueryObjectColumns } from 'src/views/CRUD/types';
-import { WIDER_DROPDOWN_WIDTH } from 'src/components/ListView/utils';
 
 const extensionsRegistry = getExtensionsRegistry();
 const DatasetDeleteRelatedExtension = extensionsRegistry.get(
@@ -802,7 +803,7 @@ const DatasetList: FunctionComponent<DatasetListProps> = ({
                           avatar={<span>•</span>}
                           title={
                             <Typography.Link
-                              href={`/superset/dashboard/${result.id}`}
+                              href={`/dashboard/${result.id}`}
                               target="_atRiskItem"
                             >
                               {result.title}

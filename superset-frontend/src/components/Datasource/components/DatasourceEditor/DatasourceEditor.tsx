@@ -16,21 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import rison from 'rison';
-import { PureComponent, useCallback, type ReactNode } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import type { JsonObject } from '@superset-ui/core';
-import { type SupersetTheme } from '@apache-superset/core/theme';
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
-import { Radio } from '@superset-ui/core/components/Radio';
-import {
-  isFeatureEnabled,
-  FeatureFlag,
-  SupersetClient,
-  getClientErrorObject,
-  getExtensionsRegistry,
-} from '@superset-ui/core';
 import { GenericDataType } from '@apache-superset/core/common';
 import { Alert } from '@apache-superset/core/components';
 import {
@@ -38,17 +23,17 @@ import {
   styled,
   themeObject,
   withTheme,
+  type SupersetTheme,
 } from '@apache-superset/core/theme';
 import { t } from '@apache-superset/core/translation';
-import Tabs from '@superset-ui/core/components/Tabs';
-import WarningIconWithTooltip from '@superset-ui/core/components/WarningIconWithTooltip';
-import TableSelector from 'src/components/TableSelector';
-import CheckboxControl from 'src/explore/components/controls/CheckboxControl';
-import TextControl from 'src/explore/components/controls/TextControl';
-import TextAreaControl from 'src/explore/components/controls/TextAreaControl';
-import SpatialControl from 'src/explore/components/controls/SpatialControl';
-import withToasts from 'src/components/MessageToasts/withToasts';
-import CurrencyControl from 'src/explore/components/controls/CurrencyControl';
+import type { JsonObject } from '@superset-ui/core';
+import {
+  FeatureFlag,
+  getClientErrorObject,
+  getExtensionsRegistry,
+  isFeatureEnabled,
+  SupersetClient,
+} from '@superset-ui/core';
 import {
   AsyncSelect,
   Badge,
@@ -63,34 +48,46 @@ import {
   Icons,
   InfoTooltip,
   Input,
+  Label,
   Loading,
   Row,
   Select,
   Tooltip,
   Typography,
-  Label,
 } from '@superset-ui/core/components';
+import { Radio } from '@superset-ui/core/components/Radio';
+import Tabs from '@superset-ui/core/components/Tabs';
+import WarningIconWithTooltip from '@superset-ui/core/components/WarningIconWithTooltip';
+import Mousetrap from 'mousetrap';
+import { PureComponent, useCallback, type ReactNode } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+import rison from 'rison';
 import { FilterableTable } from 'src/components';
+import withToasts from 'src/components/MessageToasts/withToasts';
+import TableSelector from 'src/components/TableSelector';
 import {
   executeQuery,
   formatQuery,
   resetDatabaseState,
 } from 'src/database/actions';
-import Mousetrap from 'mousetrap';
-import { clearDatasetCache } from 'src/utils/cachedSupersetGet';
-import { makeUrl } from 'src/utils/pathUtils';
+import CheckboxControl from 'src/explore/components/controls/CheckboxControl';
+import CurrencyControl from 'src/explore/components/controls/CurrencyControl';
+import SpatialControl from 'src/explore/components/controls/SpatialControl';
+import TextAreaControl from 'src/explore/components/controls/TextAreaControl';
+import TextControl from 'src/explore/components/controls/TextControl';
+import { DatasourceFolder } from 'src/explore/components/DatasourcePanel/types';
 import {
-  OwnerSelectLabel,
-  OWNER_TEXT_LABEL_PROP,
   OWNER_EMAIL_PROP,
   OWNER_OPTION_FILTER_PROPS,
+  OWNER_TEXT_LABEL_PROP,
+  OwnerSelectLabel,
 } from 'src/features/owners/OwnerSelectLabel';
+import { clearDatasetCache } from 'src/utils/cachedSupersetGet';
+import { makeUrl } from 'src/utils/pathUtils';
 import { DatabaseSelector } from '../../../DatabaseSelector';
-import CollectionTable from '../CollectionTable';
-import Fieldset from '../Fieldset';
-import Field from '../Field';
-import { fetchSyncedColumns, updateColumns } from '../../utils';
-import DatasetUsageTab from './components/DatasetUsageTab';
+import FoldersEditor from '../../FoldersEditor';
 import {
   DEFAULT_FOLDERS_COUNT,
   isDefaultFolder,
@@ -100,8 +97,11 @@ import {
   countAllFolders,
   filterFoldersByValidUuids,
 } from '../../FoldersEditor/treeUtils';
-import FoldersEditor from '../../FoldersEditor';
-import { DatasourceFolder } from 'src/explore/components/DatasourcePanel/types';
+import { fetchSyncedColumns, updateColumns } from '../../utils';
+import CollectionTable from '../CollectionTable';
+import Field from '../Field';
+import Fieldset from '../Fieldset';
+import DatasetUsageTab from './components/DatasetUsageTab';
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -1575,9 +1575,7 @@ class DatasourceEditor extends PureComponent<
               {t(
                 'Default URL to redirect to when accessing from the dataset list page. Accepts relative URLs such as',
               )}{' '}
-              <Typography.Text code>
-                /superset/dashboard/{'{id}'}/
-              </Typography.Text>
+              <Typography.Text code>/dashboard/{'{id}'}/</Typography.Text>
             </>
           }
           control={<TextControl controlId="default_endpoint" />}
