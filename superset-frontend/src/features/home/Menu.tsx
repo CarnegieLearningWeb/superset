@@ -16,24 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { useState, useEffect } from 'react';
-import { styled, css, useTheme } from '@apache-superset/core/theme';
-import { ensureStaticPrefix } from 'src/utils/assetUrl';
-import { ensureAppRoot } from 'src/utils/pathUtils';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { MainNav, MenuItem } from '@superset-ui/core/components/Menu';
-import { Tooltip, Grid, Row, Col, Image } from '@superset-ui/core/components';
-import { GenericLink } from 'src/components';
-import { NavLink, useLocation } from 'react-router-dom';
+import { css, styled, useTheme } from '@apache-superset/core/theme';
+import { Col, Grid, Image, Row, Tooltip } from '@superset-ui/core/components';
 import { Icons } from '@superset-ui/core/components/Icons';
+import { MainNav, MenuItem } from '@superset-ui/core/components/Menu';
 import { Typography } from '@superset-ui/core/components/Typography';
+import { useEffect, useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { GenericLink } from 'src/components';
 import { useUiConfig } from 'src/components/UiConfigContext';
 import { URL_PARAMS } from 'src/constants';
 import {
+  MenuData,
   MenuObjectChildProps,
   MenuObjectProps,
-  MenuData,
 } from 'src/types/bootstrapTypes';
+import { ensureStaticPrefix } from 'src/utils/assetUrl';
+import { ensureAppRoot } from 'src/utils/pathUtils';
+import { getUrlParam } from 'src/utils/urlUtils';
 import RightMenu from './RightMenu';
 import { NAVBAR_MENU_POPUP_OFFSET } from './commonMenuData';
 
@@ -395,12 +395,12 @@ export default function MenuWrapper({ data, ...rest }: MenuProps) {
   const newMenuData = {
     ...data,
   };
-  // Menu items that should go into settings dropdown
-  const settingsMenus = {
-    Data: true,
-    Security: true,
-    Manage: true,
-  };
+  // Menu category names (compared case-insensitively) that belong in the settings dropdown.
+  // The backend emits "security" (lowercase) to match the security views' class_permission_name
+  // so FAB's menu-access filter keeps the category (it was being dropped when the category was
+  // named "Security" but the permission was "security"). Normalizing the comparison avoids
+  // listing both casings and tolerates older menu payloads using "Security".
+  const settingsCategories = new Set(['data', 'security', 'manage']);
 
   // Cycle through menu.menu to build out cleanedMenu and settings
   const cleanedMenu: MenuObjectProps[] = [];
@@ -428,10 +428,10 @@ export default function MenuWrapper({ data, ...rest }: MenuProps) {
       newItem.childs = children;
     }
 
-    if (!settingsMenus.hasOwnProperty(item.name)) {
-      cleanedMenu.push(newItem);
-    } else {
+    if (settingsCategories.has(item.name?.toLowerCase())) {
       settings.push(newItem);
+    } else {
+      cleanedMenu.push(newItem);
     }
   });
 
