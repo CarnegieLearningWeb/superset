@@ -37,10 +37,12 @@ class ExploreView(BaseSupersetView):
 
 
 class ExplorePermalinkView(BaseSupersetView):
-    route_base = "/superset"
+    # route_base "/explore" (was "/superset") so that with SUPERSET_APP_ROOT="/superset" the
+    # permalink resolves to a single /superset/explore/p/<key>/ instead of double-prefixing.
+    route_base = "/explore"
     class_permission_name = "Explore"
 
-    @expose("/explore/p/<key>/")
+    @expose("/p/<key>/")
     @has_access
     @permission_name("read")
     @event_logger.log_this

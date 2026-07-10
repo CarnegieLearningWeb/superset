@@ -193,7 +193,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
         from superset.views.annotations import AnnotationLayerView
         from superset.views.api import Api
         from superset.views.chart.views import SliceModelView
-        from superset.views.core import Superset
+        from superset.views.core import Superset, SupersetPages
         from superset.views.css_templates import CssTemplateModelView
         from superset.views.dashboard.views import (
             Dashboard,
@@ -293,7 +293,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
         appbuilder.add_link(
             "Home",
             label=_("Home"),
-            href="/superset/welcome/",
+            href="/welcome/",
             cond=lambda: bool(current_app.config["LOGO_TARGET_PATH"]),
         )
 
@@ -441,6 +441,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
         appbuilder.add_view_no_menu(SavedQueryView)
         appbuilder.add_view_no_menu(SqllabView)
         appbuilder.add_view_no_menu(Superset)
+        appbuilder.add_view_no_menu(SupersetPages)
         appbuilder.add_view_no_menu(TableModelView)
         appbuilder.add_view_no_menu(TableSchemaView)
         appbuilder.add_view_no_menu(TabStateView)
@@ -978,7 +979,7 @@ class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
 class SupersetIndexView(IndexView):
     @expose("/")
     def index(self) -> FlaskResponse:
-        return redirect(url_for("Superset.welcome"))
+        return redirect(url_for("SupersetPages.welcome"))
 
     @expose("/lang/<string:locale>")
     @safe

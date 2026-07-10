@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { memo, useMemo } from 'react';
-import { useTruncation } from '@superset-ui/core';
 import { styled } from '@apache-superset/core/theme';
+import { useTruncation } from '@superset-ui/core';
+import { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import CrossLinksTooltip from './CrossLinksTooltip';
 
@@ -65,7 +65,7 @@ const StyledCrossLinks = styled.div`
 function CrossLinks({
   crossLinks,
   maxLinks = 20,
-  linkPrefix = '/superset/dashboard/',
+  linkPrefix = '/dashboard/',
   external = false,
 }: CrossLinksProps) {
   const [crossLinksRef, plusRef, elementsTruncated, hasHiddenElements] =

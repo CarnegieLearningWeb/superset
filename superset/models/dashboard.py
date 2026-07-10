@@ -197,12 +197,16 @@ class Dashboard(CoreDashboard, AuditMixinNullable, ImportExportMixin):
 
     @property
     def url(self) -> str:
-        return f"/superset/dashboard/{self.slug or self.id}/"
+        # App-root-relative (no "/superset" prefix); the frontend's React Router basename
+        # (= SUPERSET_APP_ROOT) prepends it, and SupersetPages.dashboard is mounted at
+        # "/dashboard/<id>/". Hardcoding "/superset/dashboard/" here double-prefixed to
+        # /superset/superset/dashboard/.
+        return f"/dashboard/{self.slug or self.id}/"
 
     @staticmethod
     def get_url(id_: int, slug: str | None = None) -> str:
         # To be able to generate URL's without instantiating a Dashboard object
-        return f"/superset/dashboard/{slug or id_}/"
+        return f"/dashboard/{slug or id_}/"
 
     @property
     def datasources(self) -> set[BaseDatasource]:

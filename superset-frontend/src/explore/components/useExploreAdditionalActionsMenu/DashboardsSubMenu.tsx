@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { useMemo } from 'react';
-import { t } from '@apache-superset/core/translation';
 import { css, useTheme } from '@apache-superset/core/theme';
-import { MenuItem } from '@superset-ui/core/components/Menu';
+import { t } from '@apache-superset/core/translation';
 import { Icons } from '@superset-ui/core/components/Icons';
+import { MenuItem } from '@superset-ui/core/components/Menu';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 export interface DashboardsMenuProps {
@@ -72,7 +72,7 @@ export const useDashboardsMenuItems = ({
             <Link
               target="_blank"
               rel="noreferer noopener"
-              to={`/superset/dashboard/${dashboard.id}${urlQueryString}`}
+              to={`/dashboard/${dashboard.id}${urlQueryString}`}
               css={css`
                 display: flex;
                 flex-direction: row;

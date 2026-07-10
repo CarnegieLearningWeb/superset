@@ -1420,7 +1420,7 @@ class DashboardRestApi(CustomTagsOptimizationMixin, BaseSupersetModelRestApi):
             ).run()
         )
 
-        dashboard_url = get_url_path("Superset.dashboard_permalink", key=permalink_key)
+        dashboard_url = get_url_path("SupersetPages.dashboard_permalink", key=permalink_key)
         screenshot_obj = DashboardScreenshot(dashboard_url, dashboard.digest)
         cache_key = screenshot_obj.get_cache_key(window_size, thumb_size, permalink_key)
         image_url = get_url_path(
@@ -1608,7 +1608,7 @@ class DashboardRestApi(CustomTagsOptimizationMixin, BaseSupersetModelRestApi):
 
         current_user = get_current_user()
         dashboard_url = get_url_path(
-            "Superset.dashboard", dashboard_id_or_slug=dashboard.id
+            "SupersetPages.dashboard", dashboard_id_or_slug=dashboard.id
         )
         if dashboard.digest != digest:
             self.incr_stats("redirect", self.thumbnail.__name__)

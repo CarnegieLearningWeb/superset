@@ -16,49 +16,49 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { styled } from '@apache-superset/core/theme';
 import { t } from '@apache-superset/core/translation';
 import { getExtensionsRegistry, SupersetClient } from '@superset-ui/core';
-import { styled } from '@apache-superset/core/theme';
-import { useState, useMemo, useEffect, useCallback } from 'react';
-import rison from 'rison';
+import {
+  DeleteModal,
+  List,
+  Loading,
+  Tooltip,
+} from '@superset-ui/core/components';
+import { Icons } from '@superset-ui/core/components/Icons';
+import { Typography } from '@superset-ui/core/components/Typography';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useQueryParams, BooleanParam } from 'use-query-params';
+import rison from 'rison';
+import {
+  ListViewFilterOperator as FilterOperator,
+  ListView,
+  ListViewFilters,
+  ModifiedInfo,
+} from 'src/components';
+import { WIDER_DROPDOWN_WIDTH } from 'src/components/ListView/utils';
+import withToasts from 'src/components/MessageToasts/withToasts';
+import { ModalTitleWithIcon } from 'src/components/ModalTitleWithIcon';
+import { URL_PARAMS } from 'src/constants';
+import { isUserAdmin } from 'src/dashboard/util/permissionUtils';
+import DatabaseModal from 'src/features/databases/DatabaseModal';
+import UploadDataModal from 'src/features/databases/UploadDataModel';
+import { DatabaseObject } from 'src/features/databases/types';
+import SubMenu, { SubMenuProps } from 'src/features/home/SubMenu';
+import { ExtensionConfigs } from 'src/features/home/types';
+import type { MenuObjectProps } from 'src/types/bootstrapTypes';
+import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
+import handleResourceExport from 'src/utils/export';
 import { LocalStorageKeys, setItem } from 'src/utils/localStorageHelpers';
+import { getUrlParam } from 'src/utils/urlUtils';
 import { useListViewResource } from 'src/views/CRUD/hooks';
+import { QueryObjectColumns } from 'src/views/CRUD/types';
 import {
   createErrorHandler,
   createFetchRelated,
   uploadUserPerms,
 } from 'src/views/CRUD/utils';
-import withToasts from 'src/components/MessageToasts/withToasts';
-import SubMenu, { SubMenuProps } from 'src/features/home/SubMenu';
-import {
-  DeleteModal,
-  Tooltip,
-  List,
-  Loading,
-} from '@superset-ui/core/components';
-import {
-  ModifiedInfo,
-  ListView,
-  ListViewFilterOperator as FilterOperator,
-  ListViewFilters,
-} from 'src/components';
-import { Typography } from '@superset-ui/core/components/Typography';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
-import { Icons } from '@superset-ui/core/components/Icons';
-import { isUserAdmin } from 'src/dashboard/util/permissionUtils';
-import handleResourceExport from 'src/utils/export';
-import { ExtensionConfigs } from 'src/features/home/types';
-import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
-import type { MenuObjectProps } from 'src/types/bootstrapTypes';
-import DatabaseModal from 'src/features/databases/DatabaseModal';
-import UploadDataModal from 'src/features/databases/UploadDataModel';
-import { DatabaseObject } from 'src/features/databases/types';
-import { QueryObjectColumns } from 'src/views/CRUD/types';
-import { WIDER_DROPDOWN_WIDTH } from 'src/components/ListView/utils';
-import { ModalTitleWithIcon } from 'src/components/ModalTitleWithIcon';
+import { BooleanParam, useQueryParams } from 'use-query-params';
 
 const extensionsRegistry = getExtensionsRegistry();
 const DatabaseDeleteRelatedExtension = extensionsRegistry.get(
@@ -733,7 +733,7 @@ function DatabaseList({
                           avatar={<span>•</span>}
                           title={
                             <Typography.Link
-                              href={`/superset/dashboard/${result.id}`}
+                              href={`/dashboard/${result.id}`}
                               target="_atRiskItem"
                             >
                               {result.title}
