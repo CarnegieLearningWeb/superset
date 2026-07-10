@@ -17,33 +17,33 @@
  * under the License.
  */
 
-import { useCallback, useEffect, DependencyList } from 'react';
+import { DependencyList, useCallback, useEffect } from 'react';
 /* eslint camelcase: 0 */
-import URI from 'urijs';
 import {
   buildQueryContext,
   ensureIsArray,
   getChartBuildQueryRegistry,
   getChartMetadataRegistry,
-  QueryFormData,
-  SupersetClient,
-  SetDataMaskHook,
   JsonObject,
+  QueryFormData,
+  SetDataMaskHook,
+  SupersetClient,
 } from '@superset-ui/core';
-import { availableDomains } from 'src/utils/hostNamesConfig';
-import { safeStringify } from 'src/utils/safeStringify';
-import { optionLabel } from 'src/utils/common';
-import { ensureAppRoot } from 'src/utils/pathUtils';
 import { URL_PARAMS } from 'src/constants';
+import { DashboardStandaloneMode } from 'src/dashboard/util/constants';
 import {
   DISABLE_INPUT_OPERATORS,
   MULTI_OPERATORS,
-  Operators,
   OPERATOR_ENUM_TO_OPERATOR_TYPE,
+  Operators,
   UNSAVED_CHART_ID,
 } from 'src/explore/constants';
-import { DashboardStandaloneMode } from 'src/dashboard/util/constants';
 import { Slice } from 'src/types/Chart';
+import { optionLabel } from 'src/utils/common';
+import { availableDomains } from 'src/utils/hostNamesConfig';
+import { ensureAppRoot } from 'src/utils/pathUtils';
+import { safeStringify } from 'src/utils/safeStringify';
+import URI from 'urijs';
 
 // Type definitions
 export type EndpointType =
@@ -373,7 +373,7 @@ export const exportChart = async ({
     });
     payload = formData;
   } else {
-    url = ensureAppRoot('/api/v1/chart/data');
+    url = '/api/v1/chart/data';
     payload = await buildV1ChartDataPayload({
       formData,
       force,
