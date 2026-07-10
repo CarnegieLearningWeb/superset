@@ -94,11 +94,11 @@ export default function Login() {
     }
   }, []);
 
+  // SupersetClient.postForm prepends the application root via getUrl, so this
+  // endpoint must be a bare path — wrapping it in ensureAppRoot would double the
+  // prefix (e.g. /superset/superset/login/) on subdirectory deployments.
   const loginEndpoint = useMemo(
-    () =>
-      ensureAppRoot(
-        nextUrl ? `/login/?next=${encodeURIComponent(nextUrl)}` : '/login/',
-      ),
+    () => (nextUrl ? `/login/?next=${encodeURIComponent(nextUrl)}` : '/login/'),
     [nextUrl],
   );
 
