@@ -358,8 +358,8 @@ APP_NAME = "Superset"
 APP_ICON = "/static/assets/images/superset-logo-horiz.png"
 
 # Specify where clicking the logo would take the user'
-# Default value of None will take you to '/superset/welcome'
-# You can also specify a relative URL e.g. '/superset/welcome' or '/dashboards/list'
+# Default value of None will take you to '/welcome/' (under the app root)
+# You can also specify an app-root-relative URL e.g. '/welcome/' or '/dashboard/list/'
 # or you can specify a full URL e.g. 'https://foo.bar'
 LOGO_TARGET_PATH = None
 

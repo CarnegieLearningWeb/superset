@@ -116,7 +116,7 @@ class TestSerializeDashboardObject:
         dashboard = _mock_dashboard(id=42, slug=None)
         result = serialize_dashboard_object(dashboard)
 
-        assert result.url == "http://localhost:8088/superset/dashboard/42/"
+        assert result.url == "http://localhost:8088/dashboard/42/"
 
     @patch("superset.mcp_service.utils.url_utils.get_superset_base_url")
     def test_url_uses_slug_when_available(self, mock_base_url):
@@ -126,7 +126,7 @@ class TestSerializeDashboardObject:
         dashboard = _mock_dashboard(id=42, slug="my-dashboard")
         result = serialize_dashboard_object(dashboard)
 
-        assert result.url == "http://localhost:8088/superset/dashboard/my-dashboard/"
+        assert result.url == "http://localhost:8088/dashboard/my-dashboard/"
 
     @patch("superset.mcp_service.utils.url_utils.get_superset_base_url")
     def test_no_json_metadata_or_position_json_in_response(self, mock_base_url):

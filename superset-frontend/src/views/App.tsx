@@ -41,6 +41,7 @@ import ToastContainer from 'src/components/MessageToasts/ToastContainer';
 import setupApp from 'src/setup/setupApp';
 import setupPlugins from 'src/setup/setupPlugins';
 import { routes, isFrontendRoute } from 'src/views/routes';
+import { RoutePaths } from 'src/views/routePaths';
 import { Logger, LOG_ACTIONS_SPA_NAVIGATION } from 'src/logger/LogUtils';
 import setupCodeOverrides from 'src/setup/setupCodeOverrides';
 import { logEvent } from 'src/logger/actions';
@@ -102,7 +103,7 @@ const RouteSwitch = () => {
           </Suspense>
         </Route>
       ))}
-      <Redirect from="/" to="/superset/welcome/" exact />
+      <Redirect from="/" to={RoutePaths.HOME} exact />
     </Switch>
   );
 };

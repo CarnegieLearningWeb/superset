@@ -45,6 +45,21 @@ export function ensureAppRoot(path: string): string {
 }
 
 /**
+ * Inverse of {@link ensureAppRoot}: removes the application root prefix from a
+ * pathname so it can be matched against app-root-relative router paths.
+ *
+ * @param pathname A browser pathname, e.g. '/superset/dashboard/1/'
+ * @returns The app-root-relative pathname, e.g. '/dashboard/1/'
+ */
+export function stripAppRoot(pathname: string): string {
+  const root = applicationRoot();
+  if (root && (pathname === root || pathname.startsWith(`${root}/`))) {
+    return pathname.slice(root.length) || '/';
+  }
+  return pathname;
+}
+
+/**
  * Creates a URL suitable for navigation, API calls, or file downloads. Relative
  * paths are prefixed with the application root for subdirectory deployments.
  * Absolute URLs (e.g. https://...) and protocol-relative URLs (e.g. //example.com)

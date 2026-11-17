@@ -43,7 +43,7 @@ import {
 } from '@superset-ui/core';
 import { styled } from '@apache-superset/core/theme';
 import { Constants } from '@superset-ui/core/components';
-import { useHistory } from 'react-router-dom';
+import { matchPath, useHistory } from 'react-router-dom';
 import { updateDataMask, removeDataMask } from 'src/dataMask/actions';
 import {
   saveChartCustomization,
@@ -55,7 +55,8 @@ import { useImmer } from 'use-immer';
 import { isEmpty, isEqual, debounce } from 'lodash';
 import { getInitialDataMask } from 'src/dataMask/reducer';
 import { URL_PARAMS } from 'src/constants';
-import { applicationRoot } from 'src/utils/getBootstrapData';
+import { stripAppRoot } from 'src/utils/pathUtils';
+import { RoutePaths } from 'src/views/routePaths';
 import { getUrlParam } from 'src/utils/urlUtils';
 import { useTabId } from 'src/hooks/useTabId';
 import { logEvent } from 'src/logger/actions';
@@ -136,18 +137,11 @@ const publishDataMask = debounce(
 
     // pathname could be updated somewhere else through window.history
     // keep react router history in sync with window history
-    // replace params only when current page is /superset/dashboard
+    // history.replace re-adds the router basename, so strip the app root first
+    const replacementPathname = stripAppRoot(window.location.pathname);
+    // replace params only when the current page is a dashboard
     // this prevents a race condition between updating filters and navigating to Explore
-    if (window.location.pathname.includes('/superset/dashboard')) {
-      // The history API is part of React router and understands that a basename may exist.
-      // Internally it treats all paths as if they are relative to the root and appends
-      // it when necessary. We strip any prefix so that history.replace adds it back and doesn't
-      // double it up.
-      const appRoot = applicationRoot();
-      let replacementPathname = window.location.pathname;
-      if (appRoot !== '/' && replacementPathname.startsWith(appRoot)) {
-        replacementPathname = replacementPathname.substring(appRoot.length);
-      }
+    if (matchPath(replacementPathname, { path: RoutePaths.DASHBOARD })) {
       history.replace({
         pathname: replacementPathname,
         search: newParams.toString(),

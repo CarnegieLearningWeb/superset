@@ -28,6 +28,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, matchPath } from 'react-router-dom';
 import type { navigation as navigationApi } from '@apache-superset/core';
+import { stripAppRoot } from 'src/utils/pathUtils';
 import { RoutePaths } from '../../views/routePaths';
 import { Disposable } from '../models';
 import { createValueEventEmitter } from '../utils';
@@ -36,8 +37,9 @@ type Page = navigationApi.Page;
 
 /** Maps route path patterns to their corresponding Page type. */
 const PAGE_ROUTES: { path: string; page: Page }[] = [
-  { path: RoutePaths.DASHBOARD, page: 'dashboard' },
+  // DASHBOARD_LIST must precede DASHBOARD, which would otherwise match /dashboard/list/
   { path: RoutePaths.DASHBOARD_LIST, page: 'dashboard_list' },
+  { path: RoutePaths.DASHBOARD, page: 'dashboard' },
   { path: RoutePaths.QUERY_HISTORY, page: 'query_history' },
   { path: RoutePaths.SAVED_QUERIES, page: 'saved_queries' },
   { path: RoutePaths.SQLLAB, page: 'sqllab' },
@@ -58,7 +60,7 @@ function derivePage(pathname: string): Page {
 }
 
 const pageEmitter = createValueEventEmitter<Page>(
-  derivePage(window.location.pathname),
+  derivePage(stripAppRoot(window.location.pathname)),
 );
 
 /** Updates the current page from a pathname. No-op when the page is unchanged. */
