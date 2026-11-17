@@ -61,3 +61,18 @@ export function ensureAppRoot(path: string): string {
 export function makeUrl(path: string): string {
   return ensureAppRoot(path);
 }
+
+/**
+ * Inverse of ensureAppRoot: strips the application root prefix from a pathname
+ * so it can be handed to react-router (whose basename re-adds it).
+ *
+ * @param pathname - Absolute pathname, e.g. window.location.pathname
+ * @returns The pathname relative to the application root
+ */
+export function stripAppRoot(pathname: string): string {
+  const root = applicationRoot();
+  if (root && (pathname === root || pathname.startsWith(`${root}/`))) {
+    return pathname.slice(root.length) || '/';
+  }
+  return pathname;
+}

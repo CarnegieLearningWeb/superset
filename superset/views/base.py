@@ -32,7 +32,6 @@ from flask import (
     redirect,
     Response,
     session,
-    url_for,
 )
 from flask_appbuilder import BaseView, Model, ModelView
 from flask_appbuilder.actions import action
@@ -283,7 +282,8 @@ def menu_data(user: User) -> dict[str, Any]:
     return {
         "menu": appbuilder.menu.get_data(),
         "brand": {
-            "path": app.config["LOGO_TARGET_PATH"] or url_for("SupersetPages.welcome"),
+            # app-root-relative; the frontend prepends the app root
+            "path": app.config["LOGO_TARGET_PATH"] or "/welcome/",
             "icon": appbuilder.app_icon,
             "alt": appbuilder.app_name,
             "tooltip": app.config["LOGO_TOOLTIP"],

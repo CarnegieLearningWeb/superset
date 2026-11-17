@@ -380,9 +380,7 @@ def generate_dashboard(  # noqa: C901
                     "Database rollback failed during dashboard re-fetch error handling",
                     exc_info=True,
                 )
-            dashboard_url = (
-                f"{get_superset_base_url()}/superset/dashboard/{dashboard.id}/"
-            )
+            dashboard_url = f"{get_superset_base_url()}/dashboard/{dashboard.id}/"
             return GenerateDashboardResponse(
                 dashboard=DashboardInfo(
                     id=dashboard.id,
@@ -402,6 +400,7 @@ def generate_dashboard(  # noqa: C901
             serialize_user_object,
         )
 
+        dashboard_url = f"{get_superset_base_url()}/dashboard/{dashboard.id}/"
         dashboard_info = DashboardInfo(
             id=dashboard.id,
             dashboard_title=dashboard.dashboard_title,
@@ -413,7 +412,7 @@ def generate_dashboard(  # noqa: C901
             created_by=dashboard.created_by_name or None,
             changed_by=dashboard.changed_by_name or None,
             uuid=str(dashboard.uuid) if dashboard.uuid else None,
-            url=f"{get_superset_base_url()}/superset/dashboard/{dashboard.id}/",
+            url=dashboard_url,
             chart_count=len(request.chart_ids),
             owners=[
                 serialize_user_object(owner)
@@ -432,8 +431,6 @@ def generate_dashboard(  # noqa: C901
                 if (obj := serialize_chart_summary(chart)) is not None
             ],
         )
-
-        dashboard_url = f"{get_superset_base_url()}/superset/dashboard/{dashboard.id}/"
 
         logger.info(
             "Created dashboard %s with %s charts", dashboard.id, len(request.chart_ids)

@@ -229,3 +229,18 @@ test('ensureAppRoot should prefix unknown schemes instead of passing through', a
   // Unknown / custom schemes are treated as relative paths
   expect(ensureAppRoot('foo:bar')).toBe('/superset/foo:bar');
 });
+
+test('stripAppRoot leaves paths unchanged with the default root', async () => {
+  const { stripAppRoot } = await loadPathUtils('/');
+
+  expect(stripAppRoot('/dashboard/1/')).toBe('/dashboard/1/');
+});
+
+test('stripAppRoot removes the configured app root prefix', async () => {
+  const { stripAppRoot } = await loadPathUtils('/superset/');
+
+  expect(stripAppRoot('/superset/dashboard/1/')).toBe('/dashboard/1/');
+  expect(stripAppRoot('/superset')).toBe('/');
+  expect(stripAppRoot('/supersetfoo/')).toBe('/supersetfoo/');
+  expect(stripAppRoot('/welcome/')).toBe('/welcome/');
+});

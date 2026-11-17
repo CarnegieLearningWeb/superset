@@ -662,7 +662,7 @@ def dashboard_serializer(dashboard: "Dashboard") -> DashboardInfo:
     from superset.mcp_service.utils.url_utils import get_superset_base_url
 
     base_url = get_superset_base_url()
-    relative_url = dashboard.url  # e.g. "/superset/dashboard/{slug_or_id}/"
+    relative_url = dashboard.url  # e.g. "/dashboard/{slug_or_id}/"
     absolute_url = f"{base_url}{relative_url}" if relative_url else None
 
     return DashboardInfo(
@@ -744,9 +744,7 @@ def serialize_dashboard_object(dashboard: Any) -> DashboardInfo:
     slug = getattr(dashboard, "slug", None)
     dashboard_url = None
     if dashboard_id is not None:
-        dashboard_url = (
-            f"{get_superset_base_url()}/superset/dashboard/{slug or dashboard_id}/"
-        )
+        dashboard_url = f"{get_superset_base_url()}/dashboard/{slug or dashboard_id}/"
 
     json_metadata_str = getattr(dashboard, "json_metadata", None)
     position_json_str = getattr(dashboard, "position_json", None)

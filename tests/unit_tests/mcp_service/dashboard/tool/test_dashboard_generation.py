@@ -197,9 +197,7 @@ class TestGenerateDashboard:
                 == "Analytics Dashboard"
             )
             assert result.structured_content["dashboard"]["chart_count"] == 2
-            assert (
-                "/superset/dashboard/10/" in result.structured_content["dashboard_url"]
-            )
+            assert "/dashboard/10/" in result.structured_content["dashboard_url"]
 
     @patch("superset.db.session")
     @pytest.mark.asyncio
@@ -610,9 +608,7 @@ class TestAddChartToExistingDashboard:
             assert "chart_key" in result.structured_content["position"]
             row_key = result.structured_content["position"]["row_key"]
             assert row_key.startswith("ROW-")
-            assert (
-                "/superset/dashboard/1/" in result.structured_content["dashboard_url"]
-            )
+            assert "/dashboard/1/" in result.structured_content["dashboard_url"]
 
             call_args = mock_update_command.call_args[0][1]
             layout = json.loads(call_args["position_json"])
