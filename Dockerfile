@@ -29,11 +29,22 @@ ARG BUILD_TRANSLATIONS="false"
 ######################################################################
 # superset-node-ci used as a base for building frontend assets and CI
 ######################################################################
-FROM --platform=${BUILDPLATFORM} node:20-trixie-slim AS superset-node-ci
+FROM --platform=${BUILDPLATFORM} node:22-trixie-slim AS superset-node-ci
 ARG BUILD_TRANSLATIONS
 ENV BUILD_TRANSLATIONS=${BUILD_TRANSLATIONS}
 ARG DEV_MODE="false"           # Skip frontend build in dev mode
 ENV DEV_MODE=${DEV_MODE}
+
+# Apply Debian security updates not yet included in the base image tag
+RUN apt-get update -qq \
+    && apt-get upgrade -yqq --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Replace the npm bundled with the base image, whose vendored dependencies
+# (pacote, sigstore, ip-address, ...) carry known vulnerabilities
+RUN npm install -g npm@11.21.3 \
+    && npm cache clean --force
 
 COPY docker/ /app/docker/
 # Arguments for build configuration
@@ -104,6 +115,12 @@ FROM python:${PY_VER} AS python-base
 
 ARG SUPERSET_HOME="/app/superset_home"
 ENV SUPERSET_HOME=${SUPERSET_HOME}
+
+# Apply Debian security updates not yet included in the base image tag
+RUN apt-get update -qq \
+    && apt-get upgrade -yqq --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p ${SUPERSET_HOME}
 RUN useradd --user-group -d ${SUPERSET_HOME} -m --no-log-init --shell /bin/bash superset \

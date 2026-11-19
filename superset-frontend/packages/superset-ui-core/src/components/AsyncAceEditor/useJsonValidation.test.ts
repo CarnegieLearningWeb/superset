@@ -53,16 +53,24 @@ describe('useJsonValidation', () => {
   });
 
   test('returns error on first line when no line/column info in message', () => {
-    const invalidJson = '{invalid}';
-    const { result } = renderHook(() => useJsonValidation(invalidJson));
-
-    expect(result.current).toHaveLength(1);
-    expect(result.current[0]).toMatchObject({
-      type: 'error',
-      row: 0,
-      column: 0,
-      text: expect.stringContaining('Invalid JSON'),
+    // JSON.parse error messages vary across Node/V8 versions, so force a
+    // message without line/column info.
+    const parseSpy = jest.spyOn(JSON, 'parse').mockImplementation(() => {
+      throw new SyntaxError('Unexpected token i in JSON');
     });
+    try {
+      const { result } = renderHook(() => useJsonValidation('{invalid}'));
+
+      expect(result.current).toHaveLength(1);
+      expect(result.current[0]).toMatchObject({
+        type: 'error',
+        row: 0,
+        column: 0,
+        text: expect.stringContaining('Invalid JSON'),
+      });
+    } finally {
+      parseSpy.mockRestore();
+    }
   });
 
   test('uses custom error prefix', () => {

@@ -25,6 +25,9 @@ module.exports = {
     '\\.(css|less|geojson)$': '<rootDir>/spec/__mocks__/mockExportObject.js',
     '\\.(gif|ttf|eot|png|jpg)$': '<rootDir>/spec/__mocks__/mockExportString.js',
     '\\.svg$': '<rootDir>/spec/__mocks__/svgrMock.tsx',
+    // geostyler requires the legacy `blob` package only for side effects; its
+    // CJS entry relies on the `esm` loader, which fails under Node 22.
+    '^blob$': '<rootDir>/spec/__mocks__/mockExportObject.js',
     '^src/(.*)$': '<rootDir>/src/$1',
     '^spec/(.*)$': '<rootDir>/spec/$1',
     // mapping plugins of superset-ui to source code
